@@ -1,6 +1,31 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
+  # User
+  type User {
+    _id: ID
+    username: String
+    email: String
+    password: String
+    bookCount: Int
+    savedBooks: [Book]
+  }
+
+  # Book
+  type Book {
+    bookId: ID
+    authors: String
+    description: String
+    title: String
+    image: String
+    link: String
+  }
+
+  # Auth
+  type Auth {
+    token: ID!
+    user: User
+  }
 
   # Queries
   type Query {
@@ -14,43 +39,10 @@ const typeDefs = gql`
     # Adds new user. username, email, and password required. returns auth
     addUser(username: String!, email: String!, password: String!): Auth
     # TODO: add saveBook parameters (look into input type)
-    saveBook(): User
+    # saveBook: User
     # removes book by bookId
-    removeBook(bookId: ID!)
+    removeBook(bookId: ID!): Book
   }
-
-  # User
-  type User {
-    _id
-    username
-    email
-    password
-    bookCount
-    savedBooks {
-      bookId
-      authors
-      description
-      title
-      image
-      link
-    }
-  }
-
-# Book
-type Book {
-  bookId
-  authors
-  description
-  title
-  image
-  link
-}
-
-# Auth
-type Auth {
-  token
-  user
-}
 `;
 
 module.exports = { typeDefs };
