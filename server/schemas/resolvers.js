@@ -1,9 +1,9 @@
-import { AuthenticationError } from 'apollo-server-express';
-import { User } from '../models';
-import { signToken } from '../utils/auth';
+const { AuthenticationError } = require('apollo-server-express');
+const { User } = require('../models');
+const { signToken } = require('../utils/auth');
 
 // resolvers
-export const resolvers = {
+const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
@@ -18,3 +18,5 @@ export const resolvers = {
     }
   }
 };
+
+module.exports = { resolvers };
