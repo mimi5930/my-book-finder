@@ -4,11 +4,29 @@ const path = require('path');
 const db = require('./config/connection');
 const routes = require('./routes');
 
+const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/auth');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const startGQL = async () => {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: authMiddleware
+  });
+  await server.start();
+  server.applyMiddleware({ app });
+  console.log(
+    `Graph QL is ready at http://localhost:${PORT}${server.graphqlPath}`
+  );
+};
+
+startGQL();
 
 // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
