@@ -14,7 +14,7 @@ const typeDefs = gql`
   # Book
   type Book {
     bookId: ID
-    authors: String
+    authors: [String]
     description: String
     title: String
     image: String
@@ -27,19 +27,19 @@ const typeDefs = gql`
     user: User
   }
 
-  # Queries
-  type Query {
-    me: User
-  }
-
   # Create input type for saveBook
-  input bookContent {
+  input BookContent {
     bookId: ID
-    authors: String
+    authors: [String]
     description: String
     title: String
     image: String
     link: String
+  }
+
+  # Queries
+  type Query {
+    me: User
   }
 
   # Mutations
@@ -49,9 +49,9 @@ const typeDefs = gql`
     # Adds new user. username, email, and password required. returns auth
     addUser(username: String!, email: String!, password: String!): Auth
     # adds book to user's savedBooks array
-    saveBook(content: bookContent): User
+    saveBook(input: BookContent): User
     # removes book by bookId
-    removeBook(bookId: ID!): Book
+    removeBook(bookId: ID!): User
   }
 `;
 
