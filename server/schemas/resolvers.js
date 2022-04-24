@@ -41,10 +41,21 @@ const resolvers = {
       }
 
       // assign JWT
-      const newToken = signToken();
+      const newToken = signToken(findUser);
 
       // return user and token
       return { findUser, newToken };
+    },
+
+    // create new user
+    addUser: async (parent, args) => {
+      // create user in the database
+      const newUser = await User.create(args);
+
+      // assign the user a JWT
+      const newUserToken = signToken(newUser);
+
+      return { newUser, newUserToken };
     }
   }
 };
