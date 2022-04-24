@@ -9,11 +9,11 @@ const resolvers = {
     // return logged in user
     me: async (parent, args, context) => {
       if (context.user) {
-        const findUser = await User.findOne({ _id: context.user._id })
-          .select('-__v, -password')
-          .populate('savedBooks');
+        const user = await User.findOne({ _id: context.user._id }).select(
+          '-__v, -password'
+        );
 
-        return findUser;
+        return user;
       }
 
       // if JWT is not valid for user
@@ -25,10 +25,10 @@ const resolvers = {
   Mutation: {
     // log in user with email and password
     login: async (parent, { email, password }) => {
-      const findUser = await User.findOne({ email });
+      const user = await User.findOne({ email });
 
       // if no user is found with email
-      if (!findUser) {
+      if (!user) {
         throw new AuthenticationError('The email or password is incorrect!');
       }
 
@@ -41,33 +41,37 @@ const resolvers = {
       }
 
       // assign JWT
-      const newToken = signToken(findUser);
+      const token = signToken(user);
 
       // return user and token
-      return { findUser, newToken };
+      return { user, token };
     },
 
     // create new user
     addUser: async (parent, args) => {
+      console.log(args);
+
       // create user in the database
-      const newUser = await User.create(args);
+      const user = await User.create(args);
 
       // assign the user a JWT
-      const newUserToken = signToken(newUser);
+      const token = signToken(user);
 
-      return { newUser, newUserToken };
+      console.log(token);
+
+      return { user, token };
     },
 
     // save book to user
     saveBook: async (parent, args, context) => {
       if (context.user) {
-        const updatedUser = await User.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { savedBooks: args } },
+          { $addToSet: { savedBooks: args.input } },
           { new: true, runValidators: true }
         );
 
-        return updatedUser;
+        return user;
       }
 
       throw new AuthenticationError('Please log in to save a book!');
@@ -76,11 +80,13 @@ const resolvers = {
     // remove book from user's savedBooks array
     removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
-        const updatedUser = await User.findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
           { _id: context.user._id },
           { $pull: { savedBooks: { bookId: bookId } } },
           { new: true }
         );
+
+        return user;
       }
 
       throw new AuthenticationError('Please log in to remove a book!');
