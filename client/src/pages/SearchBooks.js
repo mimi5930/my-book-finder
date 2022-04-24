@@ -78,6 +78,12 @@ const SearchBooks = () => {
       return false;
     }
 
+    // Save Book call
+    // TODO Make user bookToSave is in the right format
+    console.log(bookToSave);
+
+    return;
+
     try {
       await saveBook({
         variables: { input: bookToSave }
